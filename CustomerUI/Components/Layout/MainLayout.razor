@@ -1,0 +1,18 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <a href="login" class="col-2 bg-success text-light text-center mx-2 border-dark">Login</a>
+            <a href="logout" class="col-2 bg-danger text-light text-center mx-2 border-dark">LogOut</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>

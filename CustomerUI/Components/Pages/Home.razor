@@ -1,0 +1,41 @@
+﻿@page "/"
+@* @using Services *@
+@using Tickets.Domains
+@attribute [StreamRendering(true)]
+
+<PageTitle>Home</PageTitle>
+
+@* 
+@if(model is null)
+{
+    <span>درحال بارگزاری...</span>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>نام</th>
+                <th>کد/شناسه ملی</th>                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in model)
+            {
+                <tr>
+                    <td>@m.Name</td>
+                    <td>@m.NationalCode</td>                    
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Inject] public IUserService _userService { get; set; }
+    IEnumerable<User> model;
+    protected override async Task OnInitializedAsync()
+    {
+        model = await _userService.GetUsers();
+    }
+} *@

@@ -1,0 +1,119 @@
+﻿@page "/customerslist"
+@inject IUserService UserService
+
+
+<div class="row mt-4">
+    <div class="col-8">
+        <h4 class="card-title text-dark"> لیست مشتریان</h4>
+    </div>
+    <div class="col-3 offset-1">
+        <NavLink href="customer/create" class="btn btn-info border-primary">افزودن مشتری جدید</NavLink>
+    </div>
+</div>
+
+<div class="col-12 pt-5">
+    @if (users is null)
+{
+    <span>درحال بارگزاری...</span>
+}
+else
+{
+<table class="table table-bordered border-primary border-3  table-primary table-striped ">
+    <thead>
+        <tr>
+            <th>نام</th>
+            <th>کد/شناسه ملی</th>
+                    <th>
+
+                    </th>
+        </tr>
+    </thead>
+    <tbody>
+                @if (users.Any())
+    {
+                    @foreach (var m in users)
+        {
+            <tr>
+                <td>@m.Name</td>
+                <td>@m.NationalCode</td>
+                            <td>
+                                <NavLink href="@($"customerslist/edit/{m.Id}")" class="btn btn-primary">ویرایش</NavLink>
+                                <button class="btn btn-danger" @onclick="()=>HandleDeleteuser(m)">حذف</button>
+                            </td>
+            </tr>
+        }
+    }
+    else
+    {
+      <tr>
+          <td colspan="5">رکوردی یافت نشد   </td>
+      </tr>
+    }
+    </tbody>
+</table>
+}
+</div>
+
+
+
+<Confirmation @ref="Confirmation1"
+              OnCancel="OnCancelDeleteUserClicked"
+              OnConfirm="OnConfirmDeleteUserClicked">
+    <div>
+        Do you want to delete @UserToBeDeleted?.Name?
+    </div>
+</Confirmation>
+
+
+
+@code {
+
+
+
+    [Inject] public IUserService userService { get; set; }
+
+    private List<UserDto> users;
+    private Confirmation Confirmation1;
+    private UserDto UserToBeDeleted;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await userService.GetUsersAsync();
+     
+    }
+
+
+    private void HandleDeleteuser(UserDto userDto)
+    {
+        Console.WriteLine("User Delete is called");
+        UserToBeDeleted = userDto;
+        Confirmation1.Show();
+    }
+
+    private void OnCancelDeleteUserClicked()
+    {
+        // Confirmation1.Hide();
+
+    }
+
+    private async Task OnConfirmDeleteUserClicked()
+    {
+        if (UserToBeDeleted is null)
+        {
+            return;
+        }
+
+        await userService.DeleteUserAsync(UserToBeDeleted.Id);
+        users.Remove(UserToBeDeleted); // Update UI
+        StateHasChanged(); // Notify Blazor to re-render the UI
+    }
+
+
+
+
+
+
+
+
+}
